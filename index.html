@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deutsch Daily Learner - German Learning App</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-content">
+                <h1 class="logo">🇩🇪 Deutsch Daily Learner</h1>
+                <div class="nav-buttons">
+                    <button class="nav-btn active" data-section="daily">Daily Challenge</button>
+                    <button class="nav-btn" data-section="revision">Revision</button>
+                    <button class="nav-btn" data-section="chatbot">AI Chatbot</button>
+                    <button class="nav-btn" data-section="stats">Statistics</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Streak Counter -->
+        <div class="streak-container">
+            <div class="streak-card">
+                <div class="streak-icon">🔥</div>
+                <div class="streak-info">
+                    <p class="streak-label">Current Streak</p>
+                    <p class="streak-number" id="streakCount">0</p>
+                </div>
+            </div>
+            <div class="streak-card">
+                <div class="streak-icon">✅</div>
+                <div class="streak-info">
+                    <p class="streak-label">Words Learned</p>
+                    <p class="streak-number" id="wordsLearned">0</p>
+                </div>
+            </div>
+            <div class="streak-card">
+                <div class="streak-icon">📊</div>
+                <div class="streak-info">
+                    <p class="streak-label">Total Days</p>
+                    <p class="streak-number" id="totalDays">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Sections -->
+        
+        <!-- Daily Challenge Section -->
+        <section id="daily" class="section active">
+            <div class="section-header">
+                <h2>Daily Challenge - 40 Words</h2>
+                <p id="dateDisplay"></p>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+                <span class="progress-text" id="progressText">0/40</span>
+            </div>
+
+            <div class="word-card" id="wordCard">
+                <div class="word-content">
+                    <div class="german-word" id="germanWord">Loading...</div>
+                    <div class="word-pronunciation" id="pronunciation"></div>
+                    <div class="word-translation" id="translation"></div>
+                    <div class="word-sentence">
+                        <p class="sentence-label">Example Sentence:</p>
+                        <p class="sentence-text" id="exampleSentence"></p>
+                        <p class="sentence-translation" id="sentenceTranslation"></p>
+                    </div>
+                    <div class="word-meta">
+                        <span class="word-level" id="wordLevel"></span>
+                        <span class="word-category" id="wordCategory"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" id="prevBtn">← Previous</button>
+                <button class="btn btn-primary" id="markLearned">✓ Mark as Learned</button>
+                <button class="btn btn-secondary" id="nextBtn">Next →</button>
+            </div>
+
+            <div class="daily-summary" id="dailySummary" style="display: none;">
+                <div class="summary-content">
+                    <h3>🎉 Daily Challenge Complete!</h3>
+                    <p>You've learned 40 new words today!</p>
+                    <p class="summary-message">Great job! Come back tomorrow to continue your streak.</p>
+                    <button class="btn btn-primary" onclick="location.reload()">Start Tomorrow's Challenge</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Revision Section -->
+        <section id="revision" class="section">
+            <div class="section-header">
+                <h2>Revision - Review Previous Words</h2>
+                <div class="filter-group">
+                    <select id="revisionFilter" class="filter-select">
+                        <option value="all">All Words</option>
+                        <option value="A1">A1 Level</option>
+                        <option value="A2">A2 Level</option>
+                        <option value="B1">B1 Level</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="revision-cards" id="revisionCards">
+                <!-- Cards will be populated here -->
+            </div>
+
+            <div class="empty-state" id="emptyRevision" style="display: none;">
+                <p>No words to revise yet. Complete the daily challenge first!</p>
+            </div>
+        </section>
+
+        <!-- AI Chatbot Section -->
+        <section id="chatbot" class="section">
+            <div class="section-header">
+                <h2>AI German Teacher Chatbot</h2>
+            </div>
+
+            <div class="chatbot-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-message bot-message">
+                        <p>Hallo! 👋 Ich bin dein Deutschlehrer. Schreib einen deutschen Satz und ich werde dir helfen, ihn zu verbessern!</p>
+                        <p style="font-size: 0.9em; color: #666; margin-top: 5px;">(Hello! I'm your German teacher. Write a German sentence and I'll help you correct it!)</p>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="germanInput" 
+                            placeholder="Write your German sentence here..."
+                            class="chat-input"
+                        >
+                        <button class="btn btn-send" id="sendBtn">Send</button>
+                    </div>
+                    <p class="input-hint">💡 Tip: Try using words you learned in the daily challenges!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section id="stats" class="section">
+            <div class="section-header">
+                <h2>Your Learning Statistics</h2>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Words Learned</h3>
+                    <p class="stat-number" id="statTotalWords">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Current Level</h3>
+                    <p class="stat-level" id="statLevel">A1</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Words by Level</h3>
+                    <div id="levelBreakdown" class="level-breakdown">
+                        <p>A1: <span id="countA1">0</span></p>
+                        <p>A2: <span id="countA2">0</span></p>
+                        <p>B1: <span id="countB1">0</span></p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Learning Consistency</h3>
+                    <p class="stat-percentage" id="statConsistency">0%</p>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>Learning Progress Chart</h3>
+                <canvas id="progressChart"></canvas>
+            </div>
+        </section>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
